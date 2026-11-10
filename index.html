@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#121212" />
+    <meta name="description" content="Visualizá y filtrá tus playlists exportadas a CSV. Todo se procesa en tu navegador." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Playlist Viewer</title>
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Playlist Viewer">
+          <span class="brand__mark" id="brand-mark"></span>
+          <span class="brand__name">Playlist Viewer</span>
+        </a>
+        <button class="btn btn--ghost" id="btn-open" type="button" hidden>Cargar otro CSV</button>
+      </header>
+
+      <main class="main">
+        <!-- Pantalla inicial: zona para soltar el CSV -->
+        <section class="welcome" id="welcome">
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone__icon" id="dropzone-icon"></div>
+            <h1 class="dropzone__title">Explorá tu playlist</h1>
+            <p class="dropzone__text">
+              Arrastrá acá un CSV exportado con Exportify o elegilo desde tu computadora.
+            </p>
+            <button class="btn btn--primary" id="btn-choose" type="button">Elegir archivo</button>
+            <p class="dropzone__hint">
+              ¿Todavía no tenés el CSV? Exportalo desde
+              <a href="https://watsonbox.github.io/exportify/" target="_blank" rel="noopener noreferrer">Exportify</a>.
+              Todo se procesa en tu navegador: el archivo no se sube a ningún servidor.
+            </p>
+          </div>
+        </section>
+
+        <!-- Vista con datos -->
+        <section class="workspace" id="workspace" hidden>
+          <div class="layout">
+            <aside class="filters" id="filters" aria-label="Filtros">
+              <div class="filters__head">
+                <h2 class="filters__title">Filtros</h2>
+                <button class="btn btn--text" id="btn-clear" type="button" hidden>Limpiar todo</button>
+                <button class="icon-btn filters__close" id="btn-close-filters" type="button" aria-label="Cerrar filtros"></button>
+              </div>
+              <div class="filters__body" id="filters-body"></div>
+            </aside>
+
+            <section class="results" aria-label="Canciones">
+              <div class="hero" id="hero">
+                <p class="hero__eyebrow">Playlist</p>
+                <h1 class="hero__title" id="hero-title"></h1>
+                <p class="hero__meta" id="hero-meta"></p>
+              </div>
+
+              <div class="toolbar">
+                <label class="search" for="search">
+                  <span class="search__icon" id="search-icon"></span>
+                  <input
+                    class="search__input"
+                    id="search"
+                    type="text"
+                    placeholder="Buscar en la tabla…  ( / )"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <button class="icon-btn search__clear" id="search-clear" type="button" aria-label="Borrar búsqueda" hidden></button>
+                </label>
+                <div class="toolbar__actions">
+                  <button class="btn btn--ghost" id="btn-filters" type="button" aria-controls="filters" aria-expanded="true"></button>
+                  <div class="popover-host" id="columns-host"></div>
+                  <button class="btn btn--ghost" id="btn-export" type="button"></button>
+                </div>
+              </div>
+
+              <div class="chips-row" id="active-filters" hidden></div>
+              <p class="status" id="status" aria-live="polite"></p>
+
+              <div class="table-host" id="table-host"></div>
+              <div class="empty" id="empty" hidden>
+                <p class="empty__title">Ninguna canción coincide</p>
+                <p class="empty__text">Probá con otra búsqueda o quitá algunos filtros.</p>
+                <button class="btn btn--ghost" id="btn-empty-clear" type="button">Limpiar búsqueda y filtros</button>
+              </div>
+            </section>
+          </div>
+          <div class="backdrop" id="backdrop" hidden></div>
+        </section>
+      </main>
+
+      <div class="drop-overlay" id="drop-overlay" hidden>
+        <p>Soltá el CSV para cargarlo</p>
+      </div>
+      <div class="toast" id="toast" role="alert" hidden></div>
+    </div>
+
+    <input id="file-input" type="file" accept=".csv,text/csv" hidden />
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

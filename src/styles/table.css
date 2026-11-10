@@ -1,0 +1,251 @@
+/* ───────────── Tabla virtualizada ───────────── */
+/* La altura de fila (52) y de encabezado (40) tienen que coincidir con ROW_H y HEAD_H de ui/table.ts. */
+.table {
+  height: 100%;
+}
+
+.table__scroll {
+  height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.table__inner {
+  position: relative;
+  min-width: 100%;
+}
+
+.table__head {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  height: 40px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.table__body {
+  position: relative;
+}
+
+.table__rows {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  will-change: transform;
+}
+
+.th,
+.td {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  min-width: 0;
+}
+
+.th {
+  height: 40px;
+  background: var(--bg);
+}
+
+.th--end {
+  justify-content: flex-end;
+}
+
+.td {
+  height: 52px;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  height: 52px;
+  background: var(--bg);
+}
+
+.row:hover {
+  background: var(--hover);
+}
+
+/* Columnas fijas (#, Canción) al desplazar en horizontal */
+.is-sticky {
+  position: sticky;
+  z-index: 2;
+}
+
+.td.is-sticky {
+  background: inherit;
+}
+
+.th.is-sticky {
+  z-index: 5;
+}
+
+.is-edge {
+  box-shadow: 1px 0 0 var(--line);
+}
+
+/* ───────────── Encabezados ───────────── */
+.th__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.th__btn:hover {
+  color: var(--text);
+}
+
+.th__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.th__arrow {
+  flex: none;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.th__btn:hover .th__arrow {
+  opacity: 0.5;
+}
+
+.th.is-sorted .th__btn {
+  color: var(--green);
+}
+
+.th.is-sorted .th__arrow {
+  opacity: 1;
+}
+
+.th.is-desc .th__arrow {
+  transform: rotate(180deg);
+}
+
+/* ───────────── Celdas ───────────── */
+.cell-index {
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-title,
+.cell-text {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-title {
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a.cell-title:hover {
+  text-decoration: underline;
+}
+
+.cell-text {
+  color: var(--text-2);
+}
+
+.row:hover .cell-text,
+.row:hover .cell-index {
+  color: var(--text);
+}
+
+.cell-num {
+  margin-left: auto;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.row:hover .cell-num {
+  color: var(--text);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.bar__value {
+  width: 26px;
+  flex: none;
+  color: var(--text-2);
+  font-size: 13px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar__track {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: #4d4d4d;
+  overflow: hidden;
+}
+
+.bar__fill {
+  height: 100%;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.row:hover .bar__fill {
+  background: var(--green);
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.chip {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: 500px;
+  background: var(--field);
+  color: #d0d0d0;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.row:hover .chip {
+  background: #3a3a3a;
+}
+
+.pill {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #b3b3b3;
+  color: #121212;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
