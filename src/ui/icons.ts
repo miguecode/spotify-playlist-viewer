@@ -8,6 +8,8 @@ const PATHS = {
     '<path d="M3 6h9.1a3 3 0 0 1 5.8 0H21v2h-3.1a3 3 0 0 1-5.8 0H3zm12 2a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM3 16h3.1a3 3 0 0 1 5.8 0H21v2h-9.1a3 3 0 0 1-5.8 0H3zm6 2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>',
   columns: '<path d="M4 4h4.5v16H4zm5.75 0h4.5v16h-4.5zM15.5 4H20v16h-4.5z"/>',
   download: '<path d="M11 3h2v9.17l3.59-3.58L18 10l-6 6-6-6 1.41-1.41L11 12.17zM5 19h14v2H5z"/>',
+  upload: '<path d="M11 21h2v-9.17l3.59 3.58L18 14l-6-6-6 6 1.41 1.41L11 11.83zM5 3h14v2H5z"/>',
+  external: '<path d="M8 6v2h7.59L5 18.59 6.41 20 17 9.41V17h2V6z"/>',
   arrow: '<path d="M12 4.5 18.5 12H14v7.5h-4V12H5.5z"/>',
   chevron: '<path d="m7.4 9.6 4.6 4.6 4.6-4.6L18 11l-6 6-6-6z"/>',
   info: '<path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/>',

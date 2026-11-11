@@ -98,6 +98,8 @@ btnCloseFilters.append(icon('close', 20));
 
 const filtersBadge = h('span', { class: 'badge', hidden: true });
 btnFilters.append(icon('filters', 18), h('span', { class: 'btn__label' }, 'Filtros'), filtersBadge);
+byId('link-exportify').append(icon('external', 16));
+btnOpen.prepend(icon('upload', 18));
 btnExport.append(icon('download', 18), h('span', { class: 'btn__label' }, 'Exportar CSV'));
 btnExport.title = 'Descarga las canciones y columnas que ves ahora';
 btnExport.setAttribute('aria-label', 'Exportar CSV');

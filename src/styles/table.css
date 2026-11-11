@@ -48,8 +48,6 @@
 .th {
   height: 40px;
   background: var(--bg);
-  /* La línea va en cada encabezado (no en toda la barra): así no asoma donde ya no hay columnas. */
-  border-bottom: 1px solid var(--line);
 }
 
 .th--end {

@@ -10,7 +10,7 @@ const COLUMN_HELP: Readonly<Record<string, string>> = {
   addedAt: 'Cuándo se agregó la canción a la playlist, en tu hora local.',
   duration: 'Duración de la canción, en minutos y segundos.',
   popularity:
-    'Índice de 0 a 100 que calcula Spotify según cuántas reproducciones recientes tiene. No es el total histórico y cambia con el tiempo: es una foto del momento en que se exportó la playlist.',
+    'Índice de 0 a 100 según las reproducciones recientes de la canción (no el total histórico). Ojo: un 0 puede ser un dato que Spotify no entregó, no que nadie la escuche.',
   explicit:
     'Marca «E»: Spotify considera la canción explícita cuando su letra tiene contenido explícito. La marca la declara el sello: que no la tenga no garantiza que sea apta para todo público.',
   genres: 'Géneros que Spotify asigna a los artistas de la canción, no a la canción en sí.',
