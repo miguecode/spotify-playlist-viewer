@@ -16,10 +16,12 @@ import {
   type RangeKey,
 } from '../lib/filters';
 import { fmtNumber } from '../lib/format';
+import { filterHelp } from '../lib/help';
 import { fold } from '../lib/text';
 import type { Track } from '../types';
 import { h, type Child } from './dom';
 import { icon } from './icons';
+import { infoTip } from './info-tip';
 
 /** Lo que cada sección necesita para leer y cambiar el estado de los filtros. */
 interface Ctx {
@@ -41,14 +43,20 @@ const SEARCH_FROM = 8;
 
 // ───────────────────────── Armado de secciones ─────────────────────────
 
-function makeSection(title: string, open: boolean, ...body: Child[]) {
+function makeSection(title: string, open: boolean, help: string | undefined, ...body: Child[]) {
   const badge = h('span', { class: 'fsec__badge', hidden: true });
   const chevron = icon('chevron', 18);
   chevron.classList.add('fsec__chev');
   const el = h(
     'details',
     { class: 'fsec', open },
-    h('summary', { class: 'fsec__head' }, h('span', { class: 'fsec__title' }, title), badge, chevron),
+    h(
+      'summary',
+      { class: 'fsec__head' },
+      h('span', { class: 'fsec__heading' }, h('span', { class: 'fsec__title' }, title), help ? infoTip(title, help) : null),
+      badge,
+      chevron,
+    ),
     h('div', { class: 'fsec__body' }, ...body),
   );
   const setCount = (n: number): void => {
@@ -115,6 +123,7 @@ function dateSection(
   const section = makeSection(
     title,
     open,
+    filterHelp(field),
     buttons.length > 0 ? h('div', { class: 'presets' }, ...buttons.map((b) => b.button)) : null,
     h(
       'div',
@@ -180,7 +189,7 @@ function explicitSection(ctx: Ctx): Section {
       label,
     ),
   }));
-  const section = makeSection('Contenido explícito', false, h('div', { class: 'presets' }, ...buttons.map((b) => b.button)));
+  const section = makeSection('Contenido explícito', false, filterHelp('explicit'), h('div', { class: 'presets' }, ...buttons.map((b) => b.button)));
 
   return {
     el: section.el,
@@ -280,7 +289,7 @@ function facetSection(ctx: Ctx, def: FacetDef, open: boolean): Section | null {
         })
       : null;
 
-  const section = makeSection(def.label, open, search, list, empty, more);
+  const section = makeSection(def.label, open, filterHelp(def.key), search, list, empty, more);
   build();
 
   return {
@@ -309,12 +318,18 @@ function rangeItem(ctx: Ctx, def: RangeDef, bounds: [number, number]): RangeItem
     h('input', { type: 'range', min, max, step: def.step, value: label === 'lo' ? min : max, 'aria-label': `${def.label}: ${label === 'lo' ? 'mínimo' : 'máximo'}` });
   const lo = make('lo');
   const hi = make('hi');
+  const help = filterHelp(def.key);
   const text = h('span', { class: 'range__text' });
   const box = h('div', { class: 'range__box' }, h('div', { class: 'range__track' }, h('div', { class: 'range__fill' })), lo, hi);
   const el = h(
     'div',
     { class: 'range' },
-    h('div', { class: 'range__head' }, h('span', { class: 'range__label' }, def.label), text),
+    h(
+      'div',
+      { class: 'range__head' },
+      h('span', { class: 'range__name' }, h('span', { class: 'range__label' }, def.label), help ? infoTip(def.label, help) : null),
+      text,
+    ),
     box,
   );
 
@@ -374,7 +389,8 @@ function rangeGroup(ctx: Ctx, title: string, keys: RangeKey[], open: boolean): S
   }
   if (items.length === 0) return null;
 
-  const section = makeSection(title, open, ...items.map((i) => i.el));
+  // Cada slider lleva su propio ⓘ, así que el grupo no necesita uno.
+  const section = makeSection(title, open, undefined, ...items.map((i) => i.el));
   return {
     el: section.el,
     sync(f) {

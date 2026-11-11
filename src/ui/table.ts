@@ -1,10 +1,12 @@
 import type { Column } from '../lib/columns';
+import { columnHelp } from '../lib/help';
 import { cellText } from '../lib/search';
 import type { SortState } from '../lib/sort';
 import { trackUrl } from '../lib/spotify';
 import type { Track } from '../types';
 import { h, highlight } from './dom';
 import { icon } from './icons';
+import { hideInfoTip, infoTip } from './info-tip';
 
 const ROW_H = 52;
 const HEAD_H = 40;
@@ -30,6 +32,8 @@ export class VirtualTable {
   /** Columnas que quedan fijas al desplazar en horizontal → su posición "left". */
   private sticky = new Map<string, number>();
   private stickyEdge = '';
+  /** Huella de lo que dibuja el encabezado (columnas + orden). */
+  private headKey = '';
 
   private start = -1;
   private end = -1;
@@ -65,7 +69,12 @@ export class VirtualTable {
     this.body.style.height = `${rows.length * ROW_H}px`;
     this.element.setAttribute('aria-rowcount', String(rows.length + 1));
 
-    this.renderHead();
+    // Los encabezados solo cambian con las columnas o el orden; no hace falta rehacerlos en cada tecla de la búsqueda.
+    const headKey = `${columns.map((c) => c.key).join(',')}|${sort ? `${sort.key}:${sort.dir}` : ''}`;
+    if (headKey !== this.headKey) {
+      this.headKey = headKey;
+      this.renderHead();
+    }
     if (resetScroll) this.scroller.scrollTop = 0;
     this.render(true);
   }
@@ -101,6 +110,7 @@ export class VirtualTable {
   }
 
   private renderHead(): void {
+    hideInfoTip(); // los encabezados se vuelven a crear: un globo abierto quedaría huérfano
     const cells = this.columns.map((col) => {
       const dir = this.sort?.key === col.key ? this.sort.dir : null;
       const arrow = icon('arrow', 14);
@@ -110,20 +120,23 @@ export class VirtualTable {
         {
           class: 'th__btn',
           type: 'button',
-          title: col.title ? `${col.title} · clic para ordenar` : `Ordenar por ${col.label}`,
+          title: `Ordenar por ${col.label}`,
           onclick: () => this.onSort(col),
         },
         h('span', { class: 'th__label' }, col.label),
         arrow,
       );
+      const help = columnHelp(col.key);
       const th = h(
         'div',
         {
-          class: `th${col.kind === 'num' ? ' th--end' : ''}${dir ? ' is-sorted' : ''}${dir === 'desc' ? ' is-desc' : ''}`,
+          class: `th${col.kind === 'num' ? ' th--end' : ''}${dir ? ' is-sorted' : ''}${dir === 'desc' ? ' is-desc' : ''}${help ? ' has-info' : ''}`,
           role: 'columnheader',
           'aria-sort': dir === 'asc' ? 'ascending' : dir === 'desc' ? 'descending' : 'none',
         },
         button,
+        // Fuera del botón de orden: son dos acciones distintas (ordenar / ver qué es).
+        help ? infoTip(col.label, help) : null,
       );
       this.box(th, col);
       return th;

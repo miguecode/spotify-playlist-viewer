@@ -9,7 +9,7 @@ describe('toCsv', () => {
   it('empieza con BOM, usa CRLF y escribe los encabezados', () => {
     const csv = toCsv(cols, []);
     expect(csv.startsWith('﻿')).toBe(true);
-    expect(csv).toBe('﻿Canción,Artista(s),Volumen (dB)\r\n');
+    expect(csv).toBe('﻿Canción,Artista(s),Sonoridad (dB)\r\n');
   });
 
   it('entrecomilla comas y comillas', () => {

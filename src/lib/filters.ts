@@ -84,7 +84,7 @@ export const RANGES: readonly RangeDef[] = [
   },
   {
     key: 'loudness',
-    label: 'Volumen (dB)',
+    label: 'Sonoridad (dB)',
     step: 0.1,
     value: (t) => (t.loudness === null ? null : Math.round(t.loudness * 10) / 10),
     format: (n) => fmtNumber(n, 1),

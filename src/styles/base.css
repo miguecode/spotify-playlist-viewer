@@ -203,6 +203,53 @@ mark {
   background: var(--hover);
 }
 
+/* ───────────── Ícono ⓘ y su globo de ayuda ───────────── */
+.info {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-3);
+  cursor: help;
+  transition: color 0.15s ease;
+}
+
+.info:hover,
+.info[aria-expanded='true'] {
+  color: var(--text);
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 150;
+  display: grid;
+  gap: 4px;
+  max-width: min(300px, calc(100vw - 16px));
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface-3);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.45;
+  box-shadow:
+    0 16px 24px rgba(0, 0, 0, 0.5),
+    0 6px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.tooltip__title {
+  font-weight: 800;
+}
+
+.tooltip__text {
+  color: #d0d0d0;
+}
+
 .badge {
   display: inline-grid;
   place-items: center;

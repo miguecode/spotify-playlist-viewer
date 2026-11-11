@@ -14,8 +14,6 @@ export type ColumnKind = 'index' | 'title' | 'text' | 'num' | 'bar' | 'chips' | 
 export interface Column {
   key: string;
   label: string;
-  /** Ayuda al pasar el mouse por el encabezado. */
-  title?: string;
   kind: ColumnKind;
   /** Ancho en px. */
   width: number;
@@ -34,18 +32,12 @@ export interface Column {
   bar?(t: Track): number | null;
 }
 
-function percentColumn(
-  field: PercentField,
-  label: string,
-  title: string,
-  defaultVisible: boolean,
-): Column {
+function percentColumn(field: PercentField, label: string, defaultVisible: boolean): Column {
   return {
     key: field,
     label,
-    title,
     kind: 'bar',
-    width: 140,
+    width: 160,
     defaultVisible,
     defaultDir: 'desc',
     text: (t) => String(pct(t, field) ?? ''),
@@ -59,7 +51,6 @@ export const COLUMNS: readonly Column[] = [
   {
     key: 'position',
     label: '#',
-    title: 'Posición en la playlist original',
     kind: 'index',
     width: 64,
     defaultVisible: true,
@@ -105,7 +96,7 @@ export const COLUMNS: readonly Column[] = [
     key: 'release',
     label: 'Lanzamiento',
     kind: 'text',
-    width: 140,
+    width: 160,
     defaultVisible: true,
     defaultDir: 'desc',
     text: (t) => formatReleaseDate(t.releaseRaw),
@@ -127,7 +118,7 @@ export const COLUMNS: readonly Column[] = [
     key: 'duration',
     label: 'Duración',
     kind: 'num',
-    width: 100,
+    width: 130,
     defaultVisible: true,
     defaultDir: 'desc',
     text: (t) => (t.durationMs === null ? '' : formatDuration(t.durationMs)),
@@ -137,9 +128,8 @@ export const COLUMNS: readonly Column[] = [
   {
     key: 'popularity',
     label: 'Popularidad',
-    title: 'Popularidad según Spotify (0–100)',
     kind: 'bar',
-    width: 140,
+    width: 160,
     defaultVisible: true,
     defaultDir: 'desc',
     text: (t) => String(t.popularity ?? ''),
@@ -151,7 +141,7 @@ export const COLUMNS: readonly Column[] = [
     key: 'explicit',
     label: 'Explícita',
     kind: 'explicit',
-    width: 100,
+    width: 130,
     defaultVisible: true,
     defaultDir: 'desc',
     text: (t) => (t.explicit ? 'Explícita' : ''),
@@ -184,9 +174,8 @@ export const COLUMNS: readonly Column[] = [
   {
     key: 'tempo',
     label: 'BPM',
-    title: 'Tempo en pulsos por minuto',
     kind: 'num',
-    width: 90,
+    width: 110,
     defaultVisible: true,
     defaultDir: 'desc',
     text: (t) => (t.tempo === null ? '' : String(Math.round(t.tempo))),
@@ -197,7 +186,7 @@ export const COLUMNS: readonly Column[] = [
     key: 'tonality',
     label: 'Tonalidad',
     kind: 'text',
-    width: 130,
+    width: 140,
     defaultVisible: true,
     defaultDir: 'asc',
     text: (t) => keyLabel(t.key, t.mode),
@@ -205,18 +194,18 @@ export const COLUMNS: readonly Column[] = [
     sortValue: (t) => (t.key === null || t.key < 0 ? null : t.key * 2 + (t.mode === 1 ? 1 : 0)),
     exportValue: (t) => keyLabel(t.key, t.mode),
   },
-  percentColumn('danceability', 'Bailabilidad', 'Qué tan bailable es (0–100)', true),
-  percentColumn('energy', 'Energía', 'Intensidad y actividad (0–100)', true),
-  percentColumn('valence', 'Positividad', 'Qué tan alegre suena (0–100)', true),
-  percentColumn('speechiness', 'Hablado', 'Presencia de palabra hablada (0–100)', false),
-  percentColumn('acousticness', 'Acústica', 'Confianza de que sea acústica (0–100)', false),
-  percentColumn('instrumentalness', 'Instrumental', 'Probabilidad de no tener voces (0–100)', false),
-  percentColumn('liveness', 'En vivo', 'Probabilidad de ser una grabación en vivo (0–100)', false),
+  percentColumn('danceability', 'Bailabilidad', true),
+  percentColumn('energy', 'Energía', true),
+  percentColumn('valence', 'Positividad', true),
+  percentColumn('speechiness', 'Hablado', false),
+  percentColumn('acousticness', 'Acústica', false),
+  percentColumn('instrumentalness', 'Instrumental', false),
+  percentColumn('liveness', 'En vivo', false),
   {
     key: 'loudness',
-    label: 'Volumen (dB)',
+    label: 'Sonoridad (dB)',
     kind: 'num',
-    width: 120,
+    width: 180,
     defaultVisible: false,
     defaultDir: 'desc',
     text: (t) => (t.loudness === null ? '' : fmtNumber(t.loudness, 1)),
@@ -227,7 +216,7 @@ export const COLUMNS: readonly Column[] = [
     key: 'timeSignature',
     label: 'Compás',
     kind: 'num',
-    width: 90,
+    width: 120,
     defaultVisible: false,
     defaultDir: 'asc',
     text: (t) => (t.timeSignature === null ? '' : `${t.timeSignature}/4`),

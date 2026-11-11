@@ -18,8 +18,9 @@ Arrastrás el CSV y obtenés una tabla interactiva con búsqueda, orden, columna
   - Fecha de lanzamiento (con atajos por década) y fecha en que se agregó (últimos 7 / 30 días, este año).
   - Artista, género, álbum, sello, tonalidad, compás y "agregada por", con buscador y contadores.
   - Contenido explícito.
-  - Rangos: popularidad, duración, BPM, volumen y todas las características de audio (bailabilidad, energía, positividad, etc.).
+  - Rangos: popularidad, duración, BPM, sonoridad y todas las características de audio (bailabilidad, energía, positividad, etc.).
   - Etiquetas con los filtros activos, "Limpiar todo" y exportación de la vista filtrada a CSV.
+- Ícono ⓘ en cada columna y cada filtro con una explicación corta (qué es y de dónde sale el dato); funciona con mouse, toque y teclado.
 - Atajo `/` para ir a la búsqueda.
 
 ## Desarrollo

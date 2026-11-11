@@ -54,7 +54,11 @@
   color: var(--green);
 }
 
-.fsec__title {
+.fsec__heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
   margin-right: auto;
 }
 
@@ -283,6 +287,13 @@ input[type='checkbox']:disabled {
   justify-content: space-between;
   gap: 8px;
   font-size: 13px;
+}
+
+.range__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
 }
 
 .range__label {
