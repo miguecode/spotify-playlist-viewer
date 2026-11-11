@@ -1,6 +1,6 @@
 # Playlist Viewer
 
-Visor de playlists de Spotify exportadas a CSV con [Exportify](https://watsonbox.github.io/exportify/).
+Visor de playlists de Spotify exportadas a CSV con [Exportify](https://exportify.net/).
 Arrastrás el CSV y obtenés una tabla interactiva con búsqueda, orden, columnas a elección y filtros.
 
 **Todo corre en el navegador**: el archivo no se sube a ningún servidor.

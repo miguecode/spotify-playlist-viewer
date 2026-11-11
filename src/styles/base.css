@@ -179,6 +179,12 @@ mark {
   transform: none;
 }
 
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
 .icon-btn {
   display: inline-grid;
   place-items: center;
@@ -256,12 +262,14 @@ mark {
   margin: 0;
   color: var(--text-2);
   font-size: 16px;
+  text-wrap: pretty; /* evita que quede una palabra suelta en la última línea */
 }
 
 .dropzone__hint {
   margin: 8px 0 0;
   color: var(--text-3);
   font-size: 13px;
+  text-wrap: pretty;
 }
 
 .dropzone__hint a {

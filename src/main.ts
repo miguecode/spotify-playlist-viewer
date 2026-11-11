@@ -197,7 +197,8 @@ function renderActiveFilters(): void {
       ),
     ),
   );
-  btnClear.hidden = active.length === 0;
+  // El botón siempre ocupa su lugar (solo se habilita): si apareciera y desapareciera, el panel saltaría.
+  (btnClear as HTMLButtonElement).disabled = active.length === 0;
   filtersBadge.hidden = active.length === 0;
   filtersBadge.textContent = String(active.length);
   // En pantallas chicas el botón queda solo con el ícono: el nombre accesible lo da aria-label.
