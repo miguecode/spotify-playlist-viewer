@@ -40,6 +40,9 @@ export interface Column {
 /** Texto de las celdas sin valor real en las columnas de popularidad y de audio. */
 export const UNKNOWN_TEXT = 'Sin dato';
 
+/** En popularidad un 0 se considera dato faltante (ver clearPlaceholderZeros). */
+const UNKNOWN_POPULARITY = 'Sin información';
+
 function percentColumn(field: PercentField, label: string): Column {
   return {
     key: field,
@@ -141,7 +144,7 @@ export const COLUMNS: readonly Column[] = [
     kind: 'bar',
     width: 160,
     defaultVisible: true,
-    unknown: UNKNOWN_TEXT,
+    unknown: UNKNOWN_POPULARITY,
     defaultDir: 'desc',
     text: (t) => String(t.popularity ?? ''),
     sortValue: (t) => t.popularity,

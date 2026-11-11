@@ -148,7 +148,8 @@ const isZero = (n: number | null): boolean => n === null || n === 0;
  * Cuando Spotify no tiene un dato, Exportify a veces lo escribe como 0 en vez de dejarlo vacío.
  * Un 0 así no es un valor real y mostrarlo (con su barra) engaña, así que se pasa a «sin dato»:
  * - Audio: una canción real nunca tiene tempo 0 ni todas sus medidas principales en 0.
- * - Popularidad: un 0 suelto es posible, pero toda la playlist en 0 significa que el dato no vino.
+ * - Popularidad: un 0 casi siempre es un dato que Spotify no entregó (desde 2026 quitó el campo de su API
+ *   y puede aparecer como 0), así que también se muestra como «sin información».
  */
 export function clearPlaceholderZeros(tracks: Track[]): void {
   for (const t of tracks) {
@@ -159,8 +160,8 @@ export function clearPlaceholderZeros(tracks: Track[]): void {
       t.timeSignature = null;
     }
   }
-  if (tracks.every((t) => isZero(t.popularity))) {
-    for (const t of tracks) t.popularity = null;
+  for (const t of tracks) {
+    if (t.popularity === 0) t.popularity = null;
   }
 }
 

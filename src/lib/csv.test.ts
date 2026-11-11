@@ -94,13 +94,13 @@ describe('valores en 0 que en realidad son «sin dato»', () => {
     expect(t).toMatchObject({ key: 0, speechiness: 0, instrumentalness: 0, tempo: 120, timeSignature: 4 });
   });
 
-  it('si toda la playlist tiene popularidad 0, no hay dato de popularidad', () => {
+  it('una popularidad en 0 se considera sin información', () => {
     const tracks = parseCsv([header, row('A', '0,0.5,0.7,0,-5,1,0,0,0,0,0.4,120,4'), row('B', '0,0.5,0.7,0,-5,1,0,0,0,0,0.4,120,4')].join('\n'));
     expect(tracks.map((t) => t.popularity)).toEqual([null, null]);
   });
 
-  it('un 0 de popularidad aislado se respeta', () => {
+  it('solo se anulan los 0: las demás popularidades se conservan', () => {
     const tracks = parseCsv([header, row('A', '0,0.5,0.7,0,-5,1,0,0,0,0,0.4,120,4'), row('B', '55,0.5,0.7,0,-5,1,0,0,0,0,0.4,120,4')].join('\n'));
-    expect(tracks.map((t) => t.popularity)).toEqual([0, 55]);
+    expect(tracks.map((t) => t.popularity)).toEqual([null, 55]);
   });
 });
