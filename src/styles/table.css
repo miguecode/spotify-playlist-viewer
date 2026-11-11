@@ -22,7 +22,6 @@
   display: flex;
   height: 40px;
   background: var(--bg);
-  border-bottom: 1px solid var(--line);
 }
 
 .table__body {
@@ -49,6 +48,8 @@
 .th {
   height: 40px;
   background: var(--bg);
+  /* La línea va en cada encabezado (no en toda la barra): así no asoma donde ya no hay columnas. */
+  border-bottom: 1px solid var(--line);
 }
 
 .th--end {
@@ -249,13 +250,42 @@ a.cell-title:hover {
   background: #3a3a3a;
 }
 
-.pill {
-  padding: 2px 8px;
-  border-radius: 4px;
+.unknown {
+  font-size: 13px;
+}
+
+/* Título + «E» de explícita a la derecha */
+.title-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.title-cell .cell-title {
+  flex: 0 1 auto;
+}
+
+.tag-e {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
   background: #b3b3b3;
   color: #121212;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  line-height: 1;
+  cursor: help;
+}
+
+.tag-e:hover,
+.tag-e[aria-expanded='true'] {
+  background: var(--text);
 }

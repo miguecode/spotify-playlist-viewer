@@ -110,6 +110,12 @@ mark {
   letter-spacing: -0.02em;
 }
 
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .main {
   flex: 1;
   min-height: 0;
@@ -543,6 +549,12 @@ mark {
 }
 
 /* ───────────── Pantallas chicas: los filtros pasan a ser un panel lateral ───────────── */
+@media (max-width: 640px) {
+  .brand__name {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);

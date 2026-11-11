@@ -11,7 +11,9 @@ Arrastrás el CSV y obtenés una tabla interactiva con búsqueda, orden, columna
 - **Tabla**
   - Búsqueda que ignora mayúsculas y tildes, y resalta en verde lo que coincide. Se puede escribir más de una palabra.
   - Clic en un encabezado para ordenar: ascendente → descendente → sin orden.
-  - Menú "Columnas" para ocultar o mostrar (se recuerda entre visitas).
+  - Menú "Columnas" para ocultar o mostrar (se recuerda entre visitas). Por defecto se ven Canción, Artista(s), Álbum, Lanzamiento, Duración, Género y Popularidad.
+  - Las canciones explícitas llevan una "E" a la derecha del título, con su explicación al pasar el mouse.
+  - Si Spotify no entregó un dato (popularidad, BPM, audio...), la celda dice "Sin dato" en vez de un 0 engañoso.
   - Scroll virtual: fluida con miles de canciones.
   - Clic en el nombre de una canción para abrirla en Spotify.
 - **Filtros** (solo aparecen los que el CSV permite)

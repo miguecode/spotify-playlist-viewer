@@ -9,7 +9,7 @@ import {
 } from './format';
 
 /** Cómo se dibuja la celda. */
-export type ColumnKind = 'index' | 'title' | 'text' | 'num' | 'bar' | 'chips' | 'explicit';
+export type ColumnKind = 'index' | 'title' | 'text' | 'num' | 'bar' | 'chips';
 
 export interface Column {
   key: string;
@@ -18,6 +18,11 @@ export interface Column {
   /** Ancho en px. */
   width: number;
   defaultVisible: boolean;
+  /**
+   * Texto para las celdas sin valor real (p. ej. «Sin dato»). Solo lo llevan las columnas que Exportify
+   * siempre incluye pero Spotify a veces no completa: se ofrecen igual y dicen que no hay dato.
+   */
+  unknown?: string;
   /** Sentido del primer clic al ordenar. */
   defaultDir: 'asc' | 'desc';
   /** Texto que se muestra (y en el que busca la barra de búsqueda). */
@@ -32,13 +37,17 @@ export interface Column {
   bar?(t: Track): number | null;
 }
 
-function percentColumn(field: PercentField, label: string, defaultVisible: boolean): Column {
+/** Texto de las celdas sin valor real en las columnas de popularidad y de audio. */
+export const UNKNOWN_TEXT = 'Sin dato';
+
+function percentColumn(field: PercentField, label: string): Column {
   return {
     key: field,
     label,
     kind: 'bar',
     width: 160,
-    defaultVisible,
+    defaultVisible: false,
+    unknown: UNKNOWN_TEXT,
     defaultDir: 'desc',
     text: (t) => String(pct(t, field) ?? ''),
     sortValue: (t) => t[field],
@@ -104,17 +113,6 @@ export const COLUMNS: readonly Column[] = [
     exportValue: (t) => t.releaseRaw,
   },
   {
-    key: 'addedAt',
-    label: 'Agregada el',
-    kind: 'text',
-    width: 190,
-    defaultVisible: true,
-    defaultDir: 'desc',
-    text: (t) => (t.addedAt === null ? '' : formatAddedAt(t.addedAt)),
-    sortValue: (t) => t.addedAt,
-    exportValue: (t) => (t.addedAt === null ? '' : new Date(t.addedAt).toISOString()),
-  },
-  {
     key: 'duration',
     label: 'Duración',
     kind: 'num',
@@ -126,31 +124,8 @@ export const COLUMNS: readonly Column[] = [
     exportValue: (t) => t.durationMs ?? '',
   },
   {
-    key: 'popularity',
-    label: 'Popularidad',
-    kind: 'bar',
-    width: 160,
-    defaultVisible: true,
-    defaultDir: 'desc',
-    text: (t) => String(t.popularity ?? ''),
-    sortValue: (t) => t.popularity,
-    exportValue: (t) => t.popularity ?? '',
-    bar: (t) => (t.popularity === null ? null : t.popularity / 100),
-  },
-  {
-    key: 'explicit',
-    label: 'Explícita',
-    kind: 'explicit',
-    width: 130,
-    defaultVisible: true,
-    defaultDir: 'desc',
-    text: (t) => (t.explicit ? 'Explícita' : ''),
-    sortValue: (t) => (t.explicit === null ? null : t.explicit ? 1 : 0),
-    exportValue: (t) => (t.explicit === null ? '' : String(t.explicit)),
-  },
-  {
     key: 'genres',
-    label: 'Géneros',
+    label: 'Género',
     kind: 'chips',
     width: 260,
     defaultVisible: true,
@@ -161,67 +136,17 @@ export const COLUMNS: readonly Column[] = [
     items: (t) => t.genres,
   },
   {
-    key: 'label',
-    label: 'Sello',
-    kind: 'text',
-    width: 200,
+    key: 'popularity',
+    label: 'Popularidad',
+    kind: 'bar',
+    width: 160,
     defaultVisible: true,
-    defaultDir: 'asc',
-    text: (t) => t.label,
-    sortValue: (t) => t.label,
-    exportValue: (t) => t.label,
-  },
-  {
-    key: 'tempo',
-    label: 'BPM',
-    kind: 'num',
-    width: 110,
-    defaultVisible: true,
+    unknown: UNKNOWN_TEXT,
     defaultDir: 'desc',
-    text: (t) => (t.tempo === null ? '' : String(Math.round(t.tempo))),
-    sortValue: (t) => t.tempo,
-    exportValue: (t) => t.tempo ?? '',
-  },
-  {
-    key: 'tonality',
-    label: 'Tonalidad',
-    kind: 'text',
-    width: 140,
-    defaultVisible: true,
-    defaultDir: 'asc',
-    text: (t) => keyLabel(t.key, t.mode),
-    // Ordena por nota y, a igual nota, menor antes que mayor. -1 = sin detectar.
-    sortValue: (t) => (t.key === null || t.key < 0 ? null : t.key * 2 + (t.mode === 1 ? 1 : 0)),
-    exportValue: (t) => keyLabel(t.key, t.mode),
-  },
-  percentColumn('danceability', 'Bailabilidad', true),
-  percentColumn('energy', 'Energía', true),
-  percentColumn('valence', 'Positividad', true),
-  percentColumn('speechiness', 'Hablado', false),
-  percentColumn('acousticness', 'Acústica', false),
-  percentColumn('instrumentalness', 'Instrumental', false),
-  percentColumn('liveness', 'En vivo', false),
-  {
-    key: 'loudness',
-    label: 'Sonoridad (dB)',
-    kind: 'num',
-    width: 180,
-    defaultVisible: false,
-    defaultDir: 'desc',
-    text: (t) => (t.loudness === null ? '' : fmtNumber(t.loudness, 1)),
-    sortValue: (t) => t.loudness,
-    exportValue: (t) => t.loudness ?? '',
-  },
-  {
-    key: 'timeSignature',
-    label: 'Compás',
-    kind: 'num',
-    width: 120,
-    defaultVisible: false,
-    defaultDir: 'asc',
-    text: (t) => (t.timeSignature === null ? '' : `${t.timeSignature}/4`),
-    sortValue: (t) => t.timeSignature,
-    exportValue: (t) => t.timeSignature ?? '',
+    text: (t) => String(t.popularity ?? ''),
+    sortValue: (t) => t.popularity,
+    exportValue: (t) => t.popularity ?? '',
+    bar: (t) => (t.popularity === null ? null : t.popularity / 100),
   },
   {
     key: 'addedBy',
@@ -233,6 +158,84 @@ export const COLUMNS: readonly Column[] = [
     text: (t) => t.addedBy,
     sortValue: (t) => t.addedBy,
     exportValue: (t) => t.addedBy,
+  },
+  {
+    key: 'addedAt',
+    label: 'Agregada el',
+    kind: 'text',
+    width: 190,
+    defaultVisible: false,
+    defaultDir: 'desc',
+    text: (t) => (t.addedAt === null ? '' : formatAddedAt(t.addedAt)),
+    sortValue: (t) => t.addedAt,
+    exportValue: (t) => (t.addedAt === null ? '' : new Date(t.addedAt).toISOString()),
+  },
+  {
+    key: 'label',
+    label: 'Sello',
+    kind: 'text',
+    width: 200,
+    defaultVisible: false,
+    defaultDir: 'asc',
+    text: (t) => t.label,
+    sortValue: (t) => t.label,
+    exportValue: (t) => t.label,
+  },
+  {
+    key: 'tempo',
+    label: 'BPM',
+    kind: 'num',
+    width: 110,
+    defaultVisible: false,
+    unknown: UNKNOWN_TEXT,
+    defaultDir: 'desc',
+    text: (t) => (t.tempo === null ? '' : String(Math.round(t.tempo))),
+    sortValue: (t) => t.tempo,
+    exportValue: (t) => t.tempo ?? '',
+  },
+  {
+    key: 'tonality',
+    label: 'Tonalidad',
+    kind: 'text',
+    width: 140,
+    defaultVisible: false,
+    unknown: UNKNOWN_TEXT,
+    defaultDir: 'asc',
+    text: (t) => keyLabel(t.key, t.mode),
+    // Ordena por nota y, a igual nota, menor antes que mayor. -1 = sin detectar.
+    sortValue: (t) => (t.key === null || t.key < 0 ? null : t.key * 2 + (t.mode === 1 ? 1 : 0)),
+    exportValue: (t) => keyLabel(t.key, t.mode),
+  },
+  percentColumn('danceability', 'Bailabilidad'),
+  percentColumn('energy', 'Energía'),
+  percentColumn('valence', 'Positividad'),
+  percentColumn('speechiness', 'Hablado'),
+  percentColumn('acousticness', 'Acústica'),
+  percentColumn('instrumentalness', 'Instrumental'),
+  percentColumn('liveness', 'En vivo'),
+  {
+    key: 'loudness',
+    label: 'Sonoridad (dB)',
+    kind: 'num',
+    width: 180,
+    defaultVisible: false,
+    unknown: UNKNOWN_TEXT,
+    defaultDir: 'desc',
+    text: (t) => (t.loudness === null ? '' : fmtNumber(t.loudness, 1)),
+    sortValue: (t) => t.loudness,
+    exportValue: (t) => t.loudness ?? '',
+  },
+  {
+    key: 'timeSignature',
+    label: 'Compás',
+    kind: 'num',
+    width: 120,
+    defaultVisible: false,
+    unknown: UNKNOWN_TEXT,
+    defaultDir: 'asc',
+    text: (t) => (t.timeSignature === null ? '' : `${t.timeSignature}/4`),
+    sortValue: (t) => t.timeSignature,
+    exportValue: (t) => t.timeSignature ?? '',
   },
   {
     key: 'isrc',
@@ -247,10 +250,35 @@ export const COLUMNS: readonly Column[] = [
   },
 ];
 
-/** Una columna solo se ofrece si el CSV trae datos para ella (por ejemplo, sin audio features no hay "Energía"). */
+/**
+ * «Explícita» ya no es una columna de la tabla (se ve como una «E» junto al título),
+ * pero se sigue exportando para no perder el dato.
+ */
+const EXPLICIT_EXPORT: Column = {
+  key: 'explicit',
+  label: 'Explícita',
+  kind: 'text',
+  width: 0,
+  defaultVisible: false,
+  defaultDir: 'desc',
+  text: (t) => (t.explicit ? 'Explícita' : ''),
+  sortValue: (t) => (t.explicit === null ? null : t.explicit ? 1 : 0),
+  exportValue: (t) => (t.explicit === null ? '' : String(t.explicit)),
+};
+
+/** Columnas del CSV exportado: las visibles, y «Explícita» justo después de la canción si hay dato. */
+export function exportColumns(visible: readonly Column[], tracks: readonly Track[]): Column[] {
+  if (!tracks.some((t) => t.explicit !== null)) return [...visible];
+  const at = visible.findIndex((col) => col.kind === 'title');
+  const out = [...visible];
+  out.splice(at + 1, 0, EXPLICIT_EXPORT);
+  return out;
+}
+
+/** Una columna solo se ofrece si el CSV trae datos para ella; las que llevan `unknown` se ofrecen siempre. */
 export function columnsWithData(tracks: readonly Track[]): Column[] {
   return COLUMNS.filter((col) => {
-    if (col.kind === 'index' || col.kind === 'title') return true;
+    if (col.kind === 'index' || col.kind === 'title' || col.unknown) return true;
     return tracks.some((t) => {
       const v = col.sortValue(t);
       return v !== null && v !== '';

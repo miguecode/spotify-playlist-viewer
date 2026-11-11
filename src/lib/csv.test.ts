@@ -79,3 +79,28 @@ describe('normalizeRelease', () => {
     expect(normalizeRelease('ayer')).toBeNull();
   });
 });
+
+describe('valores en 0 que en realidad son «sin dato»', () => {
+  const header = 'Track URI,Track Name,Popularity,Danceability,Energy,Key,Loudness,Mode,Speechiness,Acousticness,Instrumentalness,Liveness,Valence,Tempo,Time Signature';
+  const row = (name: string, values: string) => `spotify:track:AAAAAAAAAAAAAAAAAAAAAA,${name},${values}`;
+
+  it('si todas las medidas de audio vienen en 0, la canción queda sin datos de audio', () => {
+    const [t] = parseCsv([header, row('A', '40,0,0,0,0,0,0,0,0,0,0,0,0')].join('\n'));
+    expect(t).toMatchObject({ popularity: 40, danceability: null, energy: null, key: null, tempo: null, timeSignature: null });
+  });
+
+  it('una canción con audio real conserva sus valores, incluso un 0 legítimo', () => {
+    const [t] = parseCsv([header, row('A', '40,0.5,0.7,0,-5.2,1,0,0.1,0,0.1,0.4,120,4')].join('\n'));
+    expect(t).toMatchObject({ key: 0, speechiness: 0, instrumentalness: 0, tempo: 120, timeSignature: 4 });
+  });
+
+  it('si toda la playlist tiene popularidad 0, no hay dato de popularidad', () => {
+    const tracks = parseCsv([header, row('A', '0,0.5,0.7,0,-5,1,0,0,0,0,0.4,120,4'), row('B', '0,0.5,0.7,0,-5,1,0,0,0,0,0.4,120,4')].join('\n'));
+    expect(tracks.map((t) => t.popularity)).toEqual([null, null]);
+  });
+
+  it('un 0 de popularidad aislado se respeta', () => {
+    const tracks = parseCsv([header, row('A', '0,0.5,0.7,0,-5,1,0,0,0,0,0.4,120,4'), row('B', '55,0.5,0.7,0,-5,1,0,0,0,0,0.4,120,4')].join('\n'));
+    expect(tracks.map((t) => t.popularity)).toEqual([0, 55]);
+  });
+});

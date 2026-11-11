@@ -6,11 +6,22 @@ import { trackUrl } from '../lib/spotify';
 import type { Track } from '../types';
 import { h, highlight } from './dom';
 import { icon } from './icons';
-import { hideInfoTip, infoTip } from './info-tip';
+import { bindTip, hideInfoTip, infoTip } from './info-tip';
 
 const ROW_H = 52;
 const HEAD_H = 40;
 const OVERSCAN = 8;
+
+/** «E» de contenido explícito, a la derecha de la canción; al pasar el mouse explica qué significa. */
+function explicitTag(): HTMLElement {
+  const tag = h(
+    'button',
+    { class: 'tag-e', type: 'button', 'aria-label': 'Explícita: qué significa', 'aria-expanded': 'false' },
+    'E',
+  );
+  bindTip(tag, 'Explícita', columnHelp('explicit') ?? '');
+  return tag;
+}
 
 /**
  * Tabla con scroll virtual: solo se dibujan las filas que se ven (más un margen),
@@ -175,7 +186,11 @@ export class VirtualTable {
 
   private renderCell(col: Column, track: Track): Node {
     const text = cellText(col, track);
-    if (text === '' && col.kind !== 'index') return h('span', { class: 'muted', 'aria-label': 'sin dato' }, '–');
+    if (text === '' && col.kind !== 'index') {
+      return col.unknown
+        ? h('span', { class: 'muted unknown' }, col.unknown)
+        : h('span', { class: 'muted', 'aria-label': 'sin dato' }, '–');
+    }
 
     switch (col.kind) {
       case 'index':
@@ -184,7 +199,7 @@ export class VirtualTable {
       case 'title': {
         const url = trackUrl(track);
         const content = highlight(text, this.terms);
-        return url
+        const title = url
           ? h(
               'a',
               {
@@ -197,6 +212,7 @@ export class VirtualTable {
               content,
             )
           : h('span', { class: 'cell-title', title: text }, content);
+        return track.explicit ? h('div', { class: 'title-cell' }, title, explicitTag()) : title;
       }
 
       case 'num':
@@ -221,9 +237,6 @@ export class VirtualTable {
             h('span', { class: 'chip' }, highlight(item, this.terms)),
           ),
         );
-
-      case 'explicit':
-        return h('span', { class: 'pill' }, highlight(text, this.terms));
 
       default:
         return h('span', { class: 'cell-text', title: text }, highlight(text, this.terms));

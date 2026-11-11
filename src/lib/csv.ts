@@ -127,6 +127,43 @@ function toTrack(row: Row, position: number): Track {
   };
 }
 
+const AUDIO_FIELDS = [
+  'danceability',
+  'energy',
+  'key',
+  'loudness',
+  'mode',
+  'speechiness',
+  'acousticness',
+  'instrumentalness',
+  'liveness',
+  'valence',
+  'tempo',
+  'timeSignature',
+] as const;
+
+const isZero = (n: number | null): boolean => n === null || n === 0;
+
+/**
+ * Cuando Spotify no tiene un dato, Exportify a veces lo escribe como 0 en vez de dejarlo vacío.
+ * Un 0 así no es un valor real y mostrarlo (con su barra) engaña, así que se pasa a «sin dato»:
+ * - Audio: una canción real nunca tiene tempo 0 ni todas sus medidas principales en 0.
+ * - Popularidad: un 0 suelto es posible, pero toda la playlist en 0 significa que el dato no vino.
+ */
+export function clearPlaceholderZeros(tracks: Track[]): void {
+  for (const t of tracks) {
+    const noAudio = [t.tempo, t.danceability, t.energy, t.valence, t.loudness].every(isZero);
+    if (noAudio) {
+      for (const field of AUDIO_FIELDS) t[field] = null;
+    } else if (t.timeSignature === 0) {
+      t.timeSignature = null;
+    }
+  }
+  if (tracks.every((t) => isZero(t.popularity))) {
+    for (const t of tracks) t.popularity = null;
+  }
+}
+
 /** Convierte el texto de un CSV de Exportify en canciones. Lanza CsvError si no se puede. */
 export function parseCsv(text: string): Track[] {
   const result = Papa.parse<Row>(text, {
@@ -151,5 +188,6 @@ export function parseCsv(text: string): Track[] {
   }
 
   if (tracks.length === 0) throw new CsvError('El CSV no tiene canciones.');
+  clearPlaceholderZeros(tracks);
   return tracks;
 }

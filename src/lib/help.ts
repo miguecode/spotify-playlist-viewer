@@ -12,7 +12,7 @@ const COLUMN_HELP: Readonly<Record<string, string>> = {
   popularity:
     'Índice de 0 a 100 que calcula Spotify según cuántas reproducciones recientes tiene. No es el total histórico y cambia con el tiempo: es una foto del momento en que se exportó la playlist.',
   explicit:
-    'Spotify marca la canción como explícita cuando su letra tiene contenido explícito. La marca la declara el sello: que no la tenga no garantiza que sea apta para todo público.',
+    'Marca «E»: Spotify considera la canción explícita cuando su letra tiene contenido explícito. La marca la declara el sello: que no la tenga no garantiza que sea apta para todo público.',
   genres: 'Géneros que Spotify asigna a los artistas de la canción, no a la canción en sí.',
   label: 'Discográfica que publicó el álbum (por ejemplo, EMI o Universal). Es un dato del álbum, no de la canción.',
   tempo:

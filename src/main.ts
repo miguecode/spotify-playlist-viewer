@@ -3,7 +3,7 @@ import './styles/base.css';
 import './styles/table.css';
 import './styles/filters.css';
 
-import { columnsWithData, type Column } from './lib/columns';
+import { columnsWithData, exportColumns, type Column } from './lib/columns';
 import { CsvError, parseCsv } from './lib/csv';
 import { toCsv } from './lib/export';
 import {
@@ -27,7 +27,8 @@ import { VirtualTable } from './ui/table';
 
 /** Un CSV de Exportify pesa unos KB; algo mucho más grande no es una playlist. */
 const MAX_BYTES = 50 * 1024 * 1024;
-const COLUMNS_KEY = 'playlist-viewer:columns';
+// v2: cambió el orden y las columnas visibles por defecto, así que se descartan las elecciones guardadas antes.
+const COLUMNS_KEY = 'playlist-viewer:columns:v2';
 
 // ───────────────────────── Estado ─────────────────────────
 
@@ -68,6 +69,7 @@ const isVisible = (col: Column): boolean => col.kind === 'title' || (app.overrid
 const welcome = byId('welcome');
 const workspace = byId('workspace');
 const btnOpen = byId('btn-open');
+const topbarActions = byId('topbar-actions');
 const btnChoose = byId('btn-choose');
 const fileInput = byId<HTMLInputElement>('file-input');
 const heroTitle = byId('hero-title');
@@ -318,7 +320,7 @@ function openPlaylist(name: string, tracks: Track[]): void {
 
   welcome.hidden = true;
   workspace.hidden = false;
-  btnOpen.hidden = false;
+  topbarActions.hidden = false;
 
   columnsMenu.setColumns(columns, isVisible);
   panel.setTracks(tracks);
@@ -394,7 +396,7 @@ btnExport.addEventListener('click', () => {
     return;
   }
   const slug = data.name.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'playlist';
-  const url = URL.createObjectURL(new Blob([toCsv(app.shown, app.rows)], { type: 'text/csv;charset=utf-8' }));
+  const url = URL.createObjectURL(new Blob([toCsv(exportColumns(app.shown, app.rows), app.rows)], { type: 'text/csv;charset=utf-8' }));
   const link = h('a', { href: url, download: `${slug}-vista.csv` });
   document.body.append(link);
   link.click();

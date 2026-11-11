@@ -82,14 +82,8 @@ export function hideInfoTip(): void {
   open = null;
 }
 
-/** Botón ⓘ que explica `label` con `text`. */
-export function infoTip(label: string, text: string): HTMLButtonElement {
-  const trigger = h(
-    'button',
-    { class: 'info', type: 'button', 'aria-label': `Qué es: ${label}`, 'aria-expanded': 'false' },
-    icon('info', 16),
-  );
-
+/** Conecta cualquier botón con el globo de ayuda (mouse, teclado y toque). */
+export function bindTip(trigger: HTMLElement, label: string, text: string): void {
   trigger.addEventListener('pointerenter', (ev) => {
     if (ev.pointerType === 'mouse') show(trigger, label, text, false);
   });
@@ -104,12 +98,21 @@ export function infoTip(label: string, text: string): HTMLButtonElement {
     if (open?.trigger === trigger) hideInfoTip();
   });
   trigger.addEventListener('click', (ev) => {
-    // Dentro de un <summary> o de un encabezado: no debe plegar la sección ni ordenar la columna.
+    // Dentro de un <summary>, un encabezado o un enlace: no debe plegar, ordenar ni navegar.
     ev.preventDefault();
     ev.stopPropagation();
     if (open?.trigger === trigger && open.pinned) hideInfoTip();
     else show(trigger, label, text, true);
   });
+}
 
+/** Botón ⓘ que explica `label` con `text`. */
+export function infoTip(label: string, text: string): HTMLButtonElement {
+  const trigger = h(
+    'button',
+    { class: 'info', type: 'button', 'aria-label': `Qué es: ${label}`, 'aria-expanded': 'false' },
+    icon('info', 16),
+  );
+  bindTip(trigger, label, text);
   return trigger;
 }
